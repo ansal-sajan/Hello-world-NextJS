@@ -3,7 +3,7 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - master
+      - master  # Adjust this to your main branch name
 
 jobs:
   deploy:
@@ -28,8 +28,16 @@ jobs:
           npm install
           npm run build
 
+      - name: Archive files for deployment
+        run: |
+          tar -czf deployment.tar.gz ./*
+
       - name: Deploy to AWS EC2
         run: |
-          scp -r ./ ubuntu@100.25.153.207:/home/ubuntu/hello-world
+          scp deployment.tar.gz ubuntu@100.25.153.207:/home/ubuntu/hello-world/deployment.tar.gz
+
+      - name: Extract files on EC2
+        run: |
+          ssh ubuntu@100.25.153.207 "tar -xzf /home/ubuntu/hello-world/deployment.tar.gz -C /home/ubuntu/hello-world"
         shell: bash
 
