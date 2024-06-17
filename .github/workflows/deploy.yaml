@@ -21,7 +21,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           # Add the EC2 instance to known_hosts to prevent host key verification failure
-          ssh-keyscan -H 100.25.153.207 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 54.210.195.81 >> ~/.ssh/known_hosts
 
       - name: Install dependencies and build
         run: |
@@ -34,10 +34,10 @@ jobs:
 
       - name: Deploy to AWS EC2
         run: |
-          scp deployment.tar.gz ubuntu@100.25.153.207:/home/ubuntu/hello-world/deployment.tar.gz
+          scp deployment.tar.gz ubuntu@54.210.195.81:/home/ubuntu/hello-world/deployment.tar.gz
 
       - name: Extract files on EC2
         run: |
-          ssh ubuntu@100.25.153.207 "tar -xzf /home/ubuntu/hello-world/deployment.tar.gz -C /home/ubuntu/hello-world"
+          ssh ubuntu@54.210.195.81 "tar -xzf /home/ubuntu/hello-world/deployment.tar.gz -C /home/ubuntu/hello-world"
         shell: bash
 
