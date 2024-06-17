@@ -3,7 +3,7 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - master  # adjust this to your main branch name
+      - master
 
 jobs:
   deploy:
@@ -13,6 +13,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Set up SSH and SCP
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Add the EC2 instance to known_hosts to prevent host key verification failure
+          ssh-keyscan -H 100.25.153.207 >> ~/.ssh/known_hosts
+
       - name: Install dependencies and build
         run: |
           npm install
@@ -21,7 +31,5 @@ jobs:
       - name: Deploy to AWS EC2
         run: |
           scp -r ./ ubuntu@100.25.153.207:/home/ubuntu/hello-world
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         shell: bash
 
